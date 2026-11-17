@@ -10,7 +10,7 @@ public final class MovieIndexerMain {
         var movies = MovieRepository.load(args[0], config.limit());
         try (IndexDirectories indexes = IndexDirectories.disk(Path.of(args[1]))) {
             var stats = new MovieIndexer().build(movies, indexes,
-                    new TextChunker(config.chunkWords()), new EmbeddingService());
+                    new TextChunker(config.chunkWords()), config.chunkOverlap()),new EmbeddingService());
             System.out.printf("Índices persistentes en %s: %d películas y %d fragmentos%n",
                     args[1], stats.movies(), stats.chunks());
         }
