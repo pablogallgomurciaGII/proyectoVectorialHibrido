@@ -17,6 +17,7 @@
  </dependencies>
  <build><plugins>
   <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><version>3.14.0</version></plugin>
+  <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-surefire-plugin</artifactId><version>3.5.2</version></plugin> <!--Añadido por nosotros-->
   <plugin><groupId>org.codehaus.mojo</groupId><artifactId>exec-maven-plugin</artifactId><version>3.6.2</version><!-- La clase principal se selecciona con -Dexec.mainClass; no fijar DemoMain aquí. --></plugin>
  </plugins></build>
 </project>

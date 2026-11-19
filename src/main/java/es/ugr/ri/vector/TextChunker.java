@@ -28,9 +28,9 @@ public final class TextChunker {
         {
             throw new IllegalArgumentException("El tamaño del fragmento debe ser positivo");
         }
-        if (overlap < 0)
+        if (overlap < 0 || overlap >= words)
         {
-            throw new IllegalArgumentException("El solapamiento no puede ser negativo, debe cumplir con 0<= o < w");
+            throw new IllegalArgumentException("El solapamiento no puede ser negativo ni mayor o igual que el tamaño del fragmento, debe cumplir con 0<= o < w");
         }
         this.words = words;
         this.overlap = overlap;
