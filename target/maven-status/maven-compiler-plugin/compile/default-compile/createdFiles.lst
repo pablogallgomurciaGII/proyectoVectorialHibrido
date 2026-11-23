@@ -1,7 +1,7 @@
 es/ugr/ri/vector/IndexDirectories.class
 es/ugr/ri/vector/MovieData.class
-es/ugr/ri/vector/MovieEvaluatorMain.class
 es/ugr/ri/vector/MovieEvaluator$Retriever.class
+es/ugr/ri/vector/MovieEvaluatorMain.class
 es/ugr/ri/vector/MovieSearcherMain.class
 es/ugr/ri/vector/MovieEvaluator$Summary.class
 es/ugr/ri/vector/MovieEvaluator.class
@@ -9,15 +9,15 @@ es/ugr/ri/vector/MovieIndexer.class
 es/ugr/ri/vector/EvaluationData.class
 es/ugr/ri/vector/MovieRepository.class
 es/ugr/ri/vector/MovieIndexerMain.class
-es/ugr/ri/vector/EmbeddingService.class
 es/ugr/ri/vector/RankedMovie.class
+es/ugr/ri/vector/EmbeddingService.class
 es/ugr/ri/vector/MovieIndexer$Stats.class
 es/ugr/ri/vector/RankFusion.class
 es/ugr/ri/vector/DemoMain.class
 es/ugr/ri/vector/MovieSearcher.class
 es/ugr/ri/vector/MovieChunk.class
-es/ugr/ri/vector/RetrievalMetrics$Scores.class
 es/ugr/ri/vector/RetrievalMetrics.class
-es/ugr/ri/vector/TextChunker.class
+es/ugr/ri/vector/RetrievalMetrics$Scores.class
 es/ugr/ri/vector/Movie.class
+es/ugr/ri/vector/TextChunker.class
 es/ugr/ri/vector/RunConfig.class
