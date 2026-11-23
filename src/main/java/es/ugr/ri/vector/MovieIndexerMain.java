@@ -9,8 +9,11 @@ public final class MovieIndexerMain {
         RunConfig config = RunConfig.fromProperties();
         var movies = MovieRepository.load(args[0], config.limit());
         try (IndexDirectories indexes = IndexDirectories.disk(Path.of(args[1]))) {
+            long inicio = System.nanoTime();
             var stats = new MovieIndexer().build(movies, indexes,
-                    new TextChunker(config.chunkWords()), new EmbeddingService());
+                    new TextChunker(config.chunkWords(), config.chunkOverlap()),new EmbeddingService());
+            double segundos = (System.nanoTime() - inicio)/1e9;
+            System.out.println("Tiempo de indexación: " + segundos + " segundos"); 
             System.out.printf("Índices persistentes en %s: %d películas y %d fragmentos%n",
                     args[1], stats.movies(), stats.chunks());
         }

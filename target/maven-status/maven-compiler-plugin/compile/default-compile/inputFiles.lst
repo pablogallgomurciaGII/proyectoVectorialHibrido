@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /home/erick/Downloads/UGR/Cuarto/RI/P4/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/DemoMain.java
 /home/erick/Downloads/UGR/Cuarto/RI/P4/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/EmbeddingService.java
 /home/erick/Downloads/UGR/Cuarto/RI/P4/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/EmbeddingSimilarityDemo.java
@@ -18,3 +19,25 @@
 /home/erick/Downloads/UGR/Cuarto/RI/P4/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/RetrievalMetrics.java
 /home/erick/Downloads/UGR/Cuarto/RI/P4/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/RunConfig.java
 /home/erick/Downloads/UGR/Cuarto/RI/P4/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/TextChunker.java
+=======
+/mnt/c/Users/Pablo/Desktop/Universidad/Cuarto_info/RI/P4/proyectoVectorialHibrido/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/DemoMain.java
+/mnt/c/Users/Pablo/Desktop/Universidad/Cuarto_info/RI/P4/proyectoVectorialHibrido/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/EmbeddingService.java
+/mnt/c/Users/Pablo/Desktop/Universidad/Cuarto_info/RI/P4/proyectoVectorialHibrido/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/EvaluationData.java
+/mnt/c/Users/Pablo/Desktop/Universidad/Cuarto_info/RI/P4/proyectoVectorialHibrido/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/IndexDirectories.java
+/mnt/c/Users/Pablo/Desktop/Universidad/Cuarto_info/RI/P4/proyectoVectorialHibrido/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/InspeccionFragmentos.java
+/mnt/c/Users/Pablo/Desktop/Universidad/Cuarto_info/RI/P4/proyectoVectorialHibrido/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/Movie.java
+/mnt/c/Users/Pablo/Desktop/Universidad/Cuarto_info/RI/P4/proyectoVectorialHibrido/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/MovieChunk.java
+/mnt/c/Users/Pablo/Desktop/Universidad/Cuarto_info/RI/P4/proyectoVectorialHibrido/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/MovieData.java
+/mnt/c/Users/Pablo/Desktop/Universidad/Cuarto_info/RI/P4/proyectoVectorialHibrido/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/MovieEvaluator.java
+/mnt/c/Users/Pablo/Desktop/Universidad/Cuarto_info/RI/P4/proyectoVectorialHibrido/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/MovieEvaluatorMain.java
+/mnt/c/Users/Pablo/Desktop/Universidad/Cuarto_info/RI/P4/proyectoVectorialHibrido/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/MovieIndexer.java
+/mnt/c/Users/Pablo/Desktop/Universidad/Cuarto_info/RI/P4/proyectoVectorialHibrido/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/MovieIndexerMain.java
+/mnt/c/Users/Pablo/Desktop/Universidad/Cuarto_info/RI/P4/proyectoVectorialHibrido/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/MovieRepository.java
+/mnt/c/Users/Pablo/Desktop/Universidad/Cuarto_info/RI/P4/proyectoVectorialHibrido/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/MovieSearcher.java
+/mnt/c/Users/Pablo/Desktop/Universidad/Cuarto_info/RI/P4/proyectoVectorialHibrido/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/MovieSearcherMain.java
+/mnt/c/Users/Pablo/Desktop/Universidad/Cuarto_info/RI/P4/proyectoVectorialHibrido/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/RankFusion.java
+/mnt/c/Users/Pablo/Desktop/Universidad/Cuarto_info/RI/P4/proyectoVectorialHibrido/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/RankedMovie.java
+/mnt/c/Users/Pablo/Desktop/Universidad/Cuarto_info/RI/P4/proyectoVectorialHibrido/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/RetrievalMetrics.java
+/mnt/c/Users/Pablo/Desktop/Universidad/Cuarto_info/RI/P4/proyectoVectorialHibrido/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/RunConfig.java
+/mnt/c/Users/Pablo/Desktop/Universidad/Cuarto_info/RI/P4/proyectoVectorialHibrido/proyectoVectorialHibrido/src/main/java/es/ugr/ri/vector/TextChunker.java
+>>>>>>> main
