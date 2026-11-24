@@ -25,6 +25,7 @@ public final class MovieEvaluatorMain {
         Path queries = args.length == 3 ? Path.of(args[1]) : SAMPLE_QUERIES;
         Path qrels = args.length == 3 ? Path.of(args[2]) : SAMPLE_QRELS;
         RunConfig config = RunConfig.fromProperties();
+        FusionConfig fusion = FusionConfig.fromProperties();
         EvaluationData data = EvaluationData.load(queries, qrels);
         try (IndexDirectories indexes = sample ? IndexDirectories.memory() : IndexDirectories.disk(Path.of(source))) {
             if (sample) {
@@ -40,17 +41,21 @@ public final class MovieEvaluatorMain {
             int missing = data.relevant.values().stream()
                     .mapToInt(s -> (int) s.stream().filter(id -> !ids.contains(id)).count()).sum();
             if (missing > 0) System.err.printf("AVISO: %d juicios positivos hacen referencia a películas ausentes del índice%n", missing);
-            System.out.printf("Modo=%s | películas indexadas=%d | consultas=%s | qrels=%s | k=%d%n",
-                    sample ? "RAM" : "DISCO", ids.size(), queries, qrels, config.k());
+            System.out.printf("Modo=%s | películas indexadas=%d | consultas=%s | qrels=%s | k=%d | candidates=%d%n",
+                    sample ? "RAM" : "DISCO", ids.size(), queries, qrels, config.k(), config.candidateChunks());
+            System.out.println("Fusión: " + fusion);
             try (MovieSearcher searcher = new MovieSearcher(indexes, new EmbeddingService())) {
                 List<MovieEvaluator.Summary> results = List.of(
                     MovieEvaluator.evaluate("BM25", q -> searcher.bm25(q,config.k()),restricted,config.k()),
-                    MovieEvaluator.evaluate("VECTOR", q -> searcher.vectorChunks(q,config.candidateChunks(),config.k()),restricted,config.k()),
+                    MovieEvaluator.evaluate(ChunkAggregation.MAX.label(), q -> searcher.vectorChunks(q,config.candidateChunks(),config.k(),ChunkAggregation.MAX),restricted,config.k()),
+                    MovieEvaluator.evaluate(ChunkAggregation.TOP2_MEAN.label(), q -> searcher.vectorChunks(q,config.candidateChunks(),config.k(),ChunkAggregation.TOP2_MEAN),restricted,config.k()),
                     MovieEvaluator.evaluate("GLOBAL", q -> searcher.vectorGlobal(q,config.k()),restricted,config.k()),
-                    MovieEvaluator.evaluate("RRF", q -> searcher.hybridRrf(q,config.candidateChunks(),config.k()),restricted,config.k())
+                    MovieEvaluator.evaluate("RRF", q -> searcher.hybridRrf(q,config.candidateChunks(),config.k(),fusion),restricted,config.k()),
+                    MovieEvaluator.evaluate("RRF-POND", q -> searcher.hybridWeightedRrf(q,config.candidateChunks(),config.k(),fusion),restricted,config.k()),
+                    MovieEvaluator.evaluate("LINEAL", q -> searcher.hybridLinear(q,config.candidateChunks(),config.k(),fusion),restricted,config.k())
                 );
-                System.out.printf("%-10s %5s %8s %8s %8s %8s %8s%n", "SISTEMA", "N", "P@k", "R@k", "F1@k", "MAP@k", "NDCG@k");
-                for (var r : results) System.out.printf(Locale.ROOT,"%-10s %5d %8.3f %8.3f %8.3f %8.3f %8.3f%n",
+                System.out.printf("%-12s %5s %8s %8s %8s %8s %8s%n", "SISTEMA", "N", "P@k", "R@k", "F1@k", "MAP@k", "NDCG@k");
+                for (var r : results) System.out.printf(Locale.ROOT,"%-12s %5d %8.3f %8.3f %8.3f %8.3f %8.3f%n",
                         r.method(),r.queries(),r.p(),r.r(),r.f1(),r.map(),r.ndcg());
             }
         }

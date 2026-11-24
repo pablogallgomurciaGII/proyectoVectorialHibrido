@@ -1,0 +1,44 @@
+nohup: ignoring input
+Indexando 29796 películas en indices/completo_w100_o25 con w=100, o=25
+WARNING: A restricted method in java.lang.foreign.Linker has been called
+WARNING: java.lang.foreign.Linker::downcallHandle has been called by the unnamed module
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for this module
+
+SLF4J(W): No SLF4J providers were found.
+SLF4J(W): Defaulting to no-operation (NOP) logger implementation
+SLF4J(W): See https://www.slf4j.org/codes.html#noProviders for further details.
+Nov 24, 2026 2:29:03 PM org.apache.lucene.internal.vectorization.VectorizationProvider lookup
+WARNING: Java vector incubator module is not readable. For optimal vector performance, pass '--add-modules jdk.incubator.vector' to enable Vector API.
+  ... 1000/29796 películas, 5949 fragmentos
+  ... 2000/29796 películas, 11609 fragmentos
+  ... 3000/29796 películas, 17513 fragmentos
+  ... 4000/29796 películas, 23369 fragmentos
+  ... 5000/29796 películas, 29066 fragmentos
+  ... 6000/29796 películas, 34902 fragmentos
+  ... 7000/29796 películas, 40322 fragmentos
+  ... 8000/29796 películas, 46012 fragmentos
+  ... 9000/29796 películas, 51844 fragmentos
+  ... 10000/29796 películas, 57420 fragmentos
+  ... 11000/29796 películas, 63370 fragmentos
+  ... 12000/29796 películas, 69019 fragmentos
+  ... 13000/29796 películas, 74626 fragmentos
+  ... 14000/29796 películas, 80343 fragmentos
+  ... 15000/29796 películas, 86135 fragmentos
+  ... 16000/29796 películas, 91934 fragmentos
+  ... 17000/29796 películas, 97551 fragmentos
+  ... 18000/29796 películas, 103254 fragmentos
+  ... 19000/29796 películas, 108883 fragmentos
+  ... 20000/29796 películas, 114548 fragmentos
+  ... 21000/29796 películas, 120434 fragmentos
+  ... 22000/29796 películas, 126406 fragmentos
+  ... 23000/29796 películas, 131992 fragmentos
+  ... 24000/29796 películas, 137421 fragmentos
+  ... 25000/29796 películas, 142971 fragmentos
+  ... 26000/29796 películas, 148666 fragmentos
+  ... 27000/29796 películas, 154293 fragmentos
+  ... 28000/29796 películas, 160006 fragmentos
+  ... 29000/29796 películas, 165736 fragmentos
+Índices persistentes en indices/completo_w100_o25
+  películas=29796  fragmentos=170451  fragmentos/película=5.72  dimensión=384  omitidas=0
+  tiempo de indexación=3987.9 s
+  configuración guardada en indices/completo_w100_o25/index_info.properties
