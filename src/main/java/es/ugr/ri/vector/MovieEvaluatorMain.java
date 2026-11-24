@@ -30,7 +30,7 @@ public final class MovieEvaluatorMain {
             if (sample) {
                 var movies = MovieData.sample();
                 var stats = new MovieIndexer().build(movies, indexes,
-                        new TextChunker(config.chunkWords()), new EmbeddingService());
+                        new TextChunker(config.chunkWords(), config.chunkOverlap()), new EmbeddingService());
                 System.out.printf("Modo RAM: %d películas, %d fragmentos%n", stats.movies(), stats.chunks());
             }
             // Los juicios se restringen a las películas presentes en el índice abierto.

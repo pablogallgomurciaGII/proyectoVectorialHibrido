@@ -10,7 +10,7 @@ public final class MovieSearcherMain {
         RunConfig config = RunConfig.fromProperties();
         try (IndexDirectories indexes = sample ? IndexDirectories.memory() : IndexDirectories.disk(Path.of(args[0]))) {
             if (sample) new MovieIndexer().build(MovieData.sample(), indexes,
-                    new TextChunker(config.chunkWords()), new EmbeddingService());
+                    new TextChunker(config.chunkWords(), config.chunkOverlap()), new EmbeddingService());
             String query = String.join(" ", java.util.Arrays.copyOfRange(args,1,args.length));
             try (MovieSearcher searcher = new MovieSearcher(indexes, new EmbeddingService())) {
                 show("BM25", searcher.bm25(query, config.k()));
