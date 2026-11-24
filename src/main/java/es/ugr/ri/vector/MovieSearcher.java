@@ -30,19 +30,53 @@ public final class MovieSearcher implements AutoCloseable {
         }
         return out;
     }
+    /**
+     * Ranking de PELÍCULAS a partir de fragmentos, con la agregación de referencia (MAX).
+     * Se mantiene la firma original para no romper a quien ya la usa (evaluador, RRF, demo).
+     */
     public List<RankedMovie> vectorChunks(String query, int candidates, int k) throws IOException {
-        int n = Math.min(candidates, chunkReader.numDocs());
-        if (n == 0) return List.of();
-        var docs = chunks.search(new KnnFloatVectorQuery("vector", embeddings.embed(query), n), n);
-        Map<String, RankedMovie> best = new HashMap<>();
-        for (var hit : docs.scoreDocs) {
-            var d = chunks.storedFields().document(hit.doc);
-            var r = new RankedMovie(d.get("movie_id"), d.get("title"), hit.score,
-                    d.getField("chunk_id").numericValue().intValue(), d.get("chunk_text"));
-            best.merge(r.id(), r, (a,b) -> a.score() >= b.score() ? a : b);
-        }
-        return best.values().stream().sorted(Comparator.comparingDouble(RankedMovie::score).reversed().thenComparing(RankedMovie::id)).limit(k).toList();
+        return vectorChunks(query, candidates, k, ChunkAggregation.MAX);
     }
+
+    /** Actividad 2: igual que el anterior pero eligiendo la agregación (MAX o TOP2_MEAN). */
+    public List<RankedMovie> vectorChunks(String query, int candidates, int k, ChunkAggregation aggregation) throws IOException {
+        return aggregation.aggregate(rawChunks(query, candidates), k);
+    }
+
+    /**
+     * Ranking BRUTO de fragmentos, antes de agrupar: puede contener varios fragmentos de la
+     * misma película. Sirve para demostrar que k fragmentos no son k películas distintas.
+     */
+    public List<ChunkHit> rawChunks(String query, int candidates) throws IOException {
+        return searchChunks(embeddings.embed(query), candidates);
+    }
+
+    /**
+     * kNN sobre el índice de fragmentos con un vector de consulta ya calculado
+     * (permite medir el tiempo de la búsqueda sin el coste de calcular el embedding).
+     * Si candidates supera el número de fragmentos del índice, se limita a ese número.
+     */
+    public List<ChunkHit> searchChunks(float[] queryVector, int candidates) throws IOException {
+        int n = Math.min(candidates, chunkReader.numDocs());
+        if (n <= 0) return List.of();
+        var docs = chunks.search(new KnnFloatVectorQuery("vector", queryVector, n), n);
+        var stored = chunks.storedFields();
+        List<ChunkHit> out = new ArrayList<>(docs.scoreDocs.length);
+        int rank = 1;
+        for (var hit : docs.scoreDocs) {
+            var d = stored.document(hit.doc);
+            out.add(new ChunkHit(rank++, d.get("movie_id"), d.get("title"),
+                    d.getField("chunk_id").numericValue().intValue(), hit.score, d.get("chunk_text")));
+        }
+        return out;
+    }
+
+    /** Vector de la consulta (mismo modelo y normalización que los documentos). */
+    public float[] embedQuery(String query) { return embeddings.embed(query); }
+
+    /** Número de fragmentos en el índice: límite superior real de candidates. */
+    public int chunkCount() { return chunkReader.numDocs(); }
+
     public List<RankedMovie> vectorGlobal(String query, int k) throws IOException {
         int n = Math.min(k, globalReader.numDocs());
         if (n == 0) return List.of();
@@ -54,9 +88,28 @@ public final class MovieSearcher implements AutoCloseable {
         }
         return out;
     }
+    /** RRF sin ponderar con la configuración original (c = 60, 20 películas de cada ranking). */
     public List<RankedMovie> hybridRrf(String query, int candidates, int k) throws Exception {
-        // EJERCICIO: sustituir esta fusión de ejemplo por una implementación propia y comparar variantes.
-        return RankFusion.rrf(bm25(query, Math.max(k, 20)), vectorChunks(query, candidates, Math.max(k, 20)), 60, k);
+        return hybridRrf(query, candidates, k, FusionConfig.defaults());
     }
+
+    /** RRF sin ponderar: Σ 1 / (c + rank). */
+    public List<RankedMovie> hybridRrf(String query, int candidates, int k, FusionConfig f) throws Exception {
+        int depth = Math.max(k, f.depth());
+        return RankFusion.rrf(bm25(query, depth), vectorChunks(query, candidates, depth), f.c(), k);
+    }
+
+    /** RRF ponderado: α / (c + rank_BM25) + (1 − α) / (c + rank_vector). */
+    public List<RankedMovie> hybridWeightedRrf(String query, int candidates, int k, FusionConfig f) throws Exception {
+        int depth = Math.max(k, f.depth());
+        return RankFusion.weightedRrf(bm25(query, depth), vectorChunks(query, candidates, depth), f.rrfAlpha(), f.c(), k);
+    }
+
+    /** Fusión lineal con min-max: α · BM25 normalizado + (1 − α) · vector normalizado. */
+    public List<RankedMovie> hybridLinear(String query, int candidates, int k, FusionConfig f) throws Exception {
+        int depth = Math.max(k, f.depth());
+        return RankFusion.linear(bm25(query, depth), vectorChunks(query, candidates, depth), f.linearAlpha(), k);
+    }
+
     @Override public void close() throws IOException { lexicalReader.close(); chunkReader.close(); globalReader.close(); }
 }

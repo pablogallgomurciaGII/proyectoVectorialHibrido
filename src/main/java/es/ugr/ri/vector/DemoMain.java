@@ -5,10 +5,10 @@ public final class DemoMain {
     public static void main(String[] args) throws Exception {
         RunConfig c = RunConfig.fromProperties();
         List<Movie> movies = MovieRepository.load(c.corpus(),c.limit());
-        System.out.printf("Corpus: %d películas; segmentador DIDÁCTICO incompleto (%d primeras palabras)%n",movies.size(),c.chunkWords());
+        System.out.printf("Corpus: %d películas; segmentador w=%d, o=%d%n",movies.size(),c.chunkWords(),c.chunkOverlap());
         EmbeddingService model = new EmbeddingService();
         try (IndexDirectories indexes = IndexDirectories.memory()) {
-            var stats = new MovieIndexer().build(movies,indexes,new TextChunker(c.chunkWords()),model);
+            var stats = new MovieIndexer().build(movies,indexes,new TextChunker(c.chunkWords(), c.chunkOverlap()),model);
             System.out.printf("Indexadas %d películas, %d fragmentos%n",stats.movies(),stats.chunks());
             try (MovieSearcher searcher = new MovieSearcher(indexes,model)) {
                 if (args.length > 0) {
