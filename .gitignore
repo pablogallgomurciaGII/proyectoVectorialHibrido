@@ -15,3 +15,5 @@ datos/
 # Sistema operativo
 .DS_Store
 Thumbs.db
+indices.zip
+indices/
