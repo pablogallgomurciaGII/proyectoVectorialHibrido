@@ -27,6 +27,7 @@ class RankFusionTest {
 
     // ---------------------------------------------------------------- RRF sin ponderar
 
+    //Estos calculos son hechos con la formula de RRF, y se comprueba que los resultados son correctos
     @Test
     void rrfCalculadoAMano() {
         List<RankedMovie> r = RankFusion.rrf(L1, L2, 60, 10);

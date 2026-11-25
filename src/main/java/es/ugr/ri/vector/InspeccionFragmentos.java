@@ -13,8 +13,10 @@ import java.util.List;
  */
 public final class InspeccionFragmentos {
 
+    // Número de palabras a mostrar de cada fragmento
     private static final int PALABRAS_MUESTRA = 8;
 
+    //Aquí se hace la inspección de los fragmentos de las películas, mostrando el número de fragmentos, su longitud y sus primeras palabras, y comprobando que el final de la sinopsis no se pierde.
     public static void main(String[] args) throws Exception {
         String origen = args.length > 0 ? args[0] : "sample";
         List<String> filtros = args.length > 1
@@ -52,6 +54,7 @@ public final class InspeccionFragmentos {
         }
     }
 
+    // Muestra información de los fragmentos de una película y comprueba que el final de la sinopsis se conserva.
     private static void inspeccionar(Movie m, TextChunker chunker) {
         String[] palabras = m.plot().trim().split("\\s+");
         List<MovieChunk> chunks = chunker.split(m);
