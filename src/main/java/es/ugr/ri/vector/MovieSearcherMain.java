@@ -14,6 +14,7 @@ import java.util.Locale;
  *   -Dshow.chunks=0     si es > 0, muestra los N primeros fragmentos SIN agrupar (actividad 2.1)
  *   -Dexcerpt.words=30  palabras del fragmento ganador que se muestran (0 = ninguna; actividad 2.5)
  *   -Drrf.c, -Drrf.alpha, -Dlinear.alpha, -Dfusion.depth   fusión híbrida (ver FusionConfig)
+ *   -Dshow.linear=true  desglose de la fusión lineal: puntuaciones en bruto, normalizadas y suma sin normalizar
  */
 public final class MovieSearcherMain {
     public static void main(String[] args) throws Exception {
@@ -42,6 +43,7 @@ public final class MovieSearcherMain {
                 show("RRF", searcher.hybridRrf(query, config.candidateChunks(), config.k(), fusion), 0);
                 show("RRF-POND", searcher.hybridWeightedRrf(query, config.candidateChunks(), config.k(), fusion), 0);
                 show("LINEAL", searcher.hybridLinear(query, config.candidateChunks(), config.k(), fusion), 0);
+                if (Boolean.getBoolean("show.linear")) showLinearDetail(searcher, query, config, fusion);
             }
         }
     }
@@ -66,6 +68,41 @@ public final class MovieSearcherMain {
                     i + 1, cut(r.title(), 22), r.score(), r.id(), r.chunkId());
             if (excerptWords > 0 && r.excerpt() != null && !r.excerpt().isBlank())
                 System.out.println("     \"" + firstWords(r.excerpt(), excerptWords) + "\"");
+        }
+    }
+
+    /**
+     * Desglose de la fusión lineal (actividad 3.2b): para cada película del ranking LINEAL,
+     * puntuación BM25 y vectorial en bruto y tras min-max, puntuación final y la suma SIN normalizar.
+     * "—" indica que la película no está entre las fusion.depth primeras de ese sistema (normalizada = 0).
+     */
+    private static void showLinearDetail(MovieSearcher searcher, String query, RunConfig config, FusionConfig f) throws Exception {
+        int depth = Math.max(config.k(), f.depth());
+        List<RankedMovie> bm25 = searcher.bm25(query, depth);
+        List<RankedMovie> vector = searcher.vectorChunks(query, config.candidateChunks(), depth);
+        var nb = RankFusion.minMax(bm25);
+        var nv = RankFusion.minMax(vector);
+        java.util.Map<String, Double> rb = new java.util.HashMap<>(), rv = new java.util.HashMap<>();
+        bm25.forEach(m -> rb.putIfAbsent(m.id(), m.score()));
+        vector.forEach(m -> rv.putIfAbsent(m.id(), m.score()));
+        double a = f.linearAlpha();
+
+        System.out.printf(Locale.ROOT, "%nDESGLOSE LINEAL (alpha=%.2f; min-max sobre las %d primeras de cada sistema)%n", a, depth);
+        System.out.printf(Locale.ROOT, "   BM25: max=%.4f min=%.4f | VECTOR: max=%.4f min=%.4f%n",
+                java.util.Collections.max(rb.values()), java.util.Collections.min(rb.values()),
+                java.util.Collections.max(rv.values()), java.util.Collections.min(rv.values()));
+        System.out.printf("%2s %-22s %8s %6s %8s %6s %7s %10s%n",
+                "", "película", "BM25", "norm", "VECTOR", "norm", "S", "sin norm.");
+        List<RankedMovie> fused = RankFusion.linear(bm25, vector, a, config.k());
+        for (int i = 0; i < fused.size(); i++) {
+            String id = fused.get(i).id();
+            Double b = rb.get(id), v = rv.get(id);
+            double raw = a * (b == null ? 0 : b) + (1 - a) * (v == null ? 0 : v);
+            System.out.printf(Locale.ROOT, "%2d %-22s %8s %6.3f %8s %6.3f %7.4f %10.4f%n",
+                    i + 1, cut(fused.get(i).title(), 22),
+                    b == null ? "—" : String.format(Locale.ROOT, "%.4f", b), nb.getOrDefault(id, 0.0),
+                    v == null ? "—" : String.format(Locale.ROOT, "%.4f", v), nv.getOrDefault(id, 0.0),
+                    fused.get(i).score(), raw);
         }
     }
 
