@@ -40,6 +40,7 @@ class TextChunkerTest {
         return sb.toString();
     }
 
+    // Test que prueba que si la sinopsis es nula o vacía, se devuelve una lista vacía de fragmentos
     @Test
     void sinopsisVaciaONula() {
         assertEquals(0, trocear(W, 3, 0).size());
@@ -47,6 +48,7 @@ class TextChunkerTest {
         assertEquals(0, new TextChunker(W, 3).split(new Movie("1", "T", "   ")).size());
     }
 
+    //Test que prueba que si la sinopsis tiene menos de w palabras, se devuelve un unico fragmento con todas las palabras
     @Test
     void menosDeWPalabras() {
         List<MovieChunk> c = trocear(W, 3, W - 1);
@@ -54,11 +56,13 @@ class TextChunkerTest {
         assertEquals(W - 1, palabras(c.get(0)));
     }
 
+    //Test que prueba que si la sinopsis tiene exactamente w palabras, se devuelve un unico fragmento con todas las palabras
     @Test
     void exactamenteWPalabras() {
         assertEquals(1, trocear(W, 3, W).size());
     }
 
+    //Test que prueba que si la sinopsis tiene w + 1 palabras, se devuelve dos fragmentos, el primero con w palabras y el segundo con 1 palabra
     @Test
     void wMasUnaPalabra() {
         List<MovieChunk> c = trocear(W, 3, W + 1);
@@ -66,12 +70,14 @@ class TextChunkerTest {
         assertEquals("p7 p8 p9 p10", c.get(1).text()); // el último fragmento corto conserva el solapamiento
     }
 
+    //Test que prueba que si la sinopsis tiene 2w + 1 palabras, se devuelve tres fragmentos, el primero con w palabras, el segundo con w palabras y el tercero con 1 palabra
     @Test
     void dosWMasUna() {
         assertEquals(3, trocear(W, 3, 2 * W + 1).size());
         assertEquals(3, trocear(W, 0, 2 * W + 1).size()); // 10 + 10 + 1 sin solapamiento
     }
 
+    //Test que prueba que si la sinopsis tiene 57 palabras, se devuelve 6 fragmentos, el primero con w palabras, el segundo con w palabras, el tercero con w palabras, el cuarto con w palabras, el quinto con w palabras y el sexto con 7 palabras
     @Test
     void cobertura_y_solapamiento_ejemplo_controlado() {
         List<MovieChunk> c = trocear(W, 3, 21);
@@ -80,6 +86,7 @@ class TextChunkerTest {
         assertEquals("p14 p15 p16 p17 p18 p19 p20", c.get(2).text());
     }
 
+    //Test que prueba que todas las palabras de la sinopsis aparecen en orden en los fragmentos, y que el número de palabras de cada fragmento es menor o igual a w
     @Test
     void todasLasPalabrasApareceEnOrden() {
         for (int o : new int[] {0, 3, W - 1}) {

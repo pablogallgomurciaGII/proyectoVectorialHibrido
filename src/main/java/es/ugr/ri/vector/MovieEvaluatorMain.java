@@ -45,7 +45,9 @@ public final class MovieEvaluatorMain {
                     sample ? "RAM" : "DISCO", ids.size(), queries, qrels, config.k(), config.candidateChunks());
             System.out.println("Fusión: " + fusion);
             try (MovieSearcher searcher = new MovieSearcher(indexes, new EmbeddingService())) {
+                List<MovieEvaluator.QueryResult> perQuery = new java.util.ArrayList<>(); // resultados por consulta, para CSV
                 List<MovieEvaluator.Summary> results = List.of(
+                    /*
                     MovieEvaluator.evaluate("BM25", q -> searcher.bm25(q,config.k()),restricted,config.k()),
                     MovieEvaluator.evaluate(ChunkAggregation.MAX.label(), q -> searcher.vectorChunks(q,config.candidateChunks(),config.k(),ChunkAggregation.MAX),restricted,config.k()),
                     MovieEvaluator.evaluate(ChunkAggregation.TOP2_MEAN.label(), q -> searcher.vectorChunks(q,config.candidateChunks(),config.k(),ChunkAggregation.TOP2_MEAN),restricted,config.k()),
@@ -53,10 +55,23 @@ public final class MovieEvaluatorMain {
                     MovieEvaluator.evaluate("RRF", q -> searcher.hybridRrf(q,config.candidateChunks(),config.k(),fusion),restricted,config.k()),
                     MovieEvaluator.evaluate("RRF-POND", q -> searcher.hybridWeightedRrf(q,config.candidateChunks(),config.k(),fusion),restricted,config.k()),
                     MovieEvaluator.evaluate("LINEAL", q -> searcher.hybridLinear(q,config.candidateChunks(),config.k(),fusion),restricted,config.k())
+                     */
+                    MovieEvaluator.evaluate("BM25", q -> searcher.bm25(q,config.k()),restricted,config.k(), perQuery),
+                    MovieEvaluator.evaluate(ChunkAggregation.MAX.label(), q -> searcher.vectorChunks(q,config.candidateChunks(),config.k(),ChunkAggregation.MAX),restricted,config.k(), perQuery),
+                    MovieEvaluator.evaluate(ChunkAggregation.TOP2_MEAN.label(), q -> searcher.vectorChunks(q,config.candidateChunks(),config.k(),ChunkAggregation.TOP2_MEAN),restricted,config.k(), perQuery),
+                    MovieEvaluator.evaluate("GLOBAL", q -> searcher.vectorGlobal(q,config.k()),restricted,config.k(), perQuery),
+                    MovieEvaluator.evaluate("RRF", q -> searcher.hybridRrf(q,config.candidateChunks(),config.k(),fusion),restricted,config.k(), perQuery),
+                    MovieEvaluator.evaluate("RRF-POND", q -> searcher.hybridWeightedRrf(q,config.candidateChunks(),config.k(),fusion),restricted,config.k(), perQuery),
+                    MovieEvaluator.evaluate("LINEAL", q -> searcher.hybridLinear(q,config.candidateChunks(),config.k(),fusion),restricted,config.k(), perQuery)
                 );
                 System.out.printf("%-12s %5s %8s %8s %8s %8s %8s%n", "SISTEMA", "N", "P@k", "R@k", "F1@k", "MAP@k", "NDCG@k");
                 for (var r : results) System.out.printf(Locale.ROOT,"%-12s %5d %8.3f %8.3f %8.3f %8.3f %8.3f%n",
                         r.method(),r.queries(),r.p(),r.r(),r.f1(),r.map(),r.ndcg());
+
+                //Esta parte del código guarda los resultados por consulta en un archivo CSV, para poder analizarlos posteriormente.
+                Path csvPath = Path.of(System.getProperty("eval.out", "resultados_por_consulta.csv"));
+                MovieEvaluator.writeCsv(csvPath, perQuery);
+                System.out.println("Resultados por consulta guardados en: " + csvPath);
             }
         }
     }

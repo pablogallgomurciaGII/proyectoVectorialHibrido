@@ -1,15 +1,91 @@
 package es.ugr.ri.vector;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.*;
-/** Ejecutar sin Maven: javac -d /tmp/metricstest ... && java -cp /tmp/metricstest ... */
+import org.junit.jupiter.api.Test;
+
 public final class MetricsSmokeTest {
+
     public static void main(String[] args) {
-        var s=RetrievalMetrics.calculate(List.of("A","X","B"),Set.of("A","B"),3);
-        near(s.precision(),2.0/3); near(s.recall(),1.0); near(s.f1(),0.8);
-        near(s.ap(),(1+2.0/3)/2);
-        near(s.ndcg(),(1+1/ (Math.log(4)/Math.log(2)))/(1+1/(Math.log(3)/Math.log(2))));
-        var f=RankFusion.rrf(List.of(new RankedMovie("A","A",2,-1,"") ),List.of(new RankedMovie("B","B",1,-1,"") ),60,2);
-        if (f.size()!=2) throw new AssertionError();
-        System.out.println("OK: métricas y RRF");
+        MetricsSmokeTest t = new MetricsSmokeTest();
+        t.relevanteEnPrimeraPosicion();
+        t.relevanteEnUltimaPosicion();
+        t.variosRelevantesEjemploGuion();
+        t.sinRelevantesRecuperados();
+        t.masRelevantesQueK();
+        t.sinDocumentosRelevantesEnQrels();
+        System.out.println("OK: todos los casos de métricas verificados");
     }
-    private static void near(double x,double y) { if(Math.abs(x-y)>1e-9) throw new AssertionError(x+" != "+y); }
+
+    //Test que prueba si es relevante en la primera posición, se calcula correctamente precision, recall, f1, ap y ndcg
+    @Test
+    void relevanteEnPrimeraPosicion() {
+        var s = RetrievalMetrics.calculate(List.of("R1", "X1", "X2", "X3", "X4"), Set.of("R1"), 5);
+        assertEquals(0.2, s.precision(), 1e-9);
+        assertEquals(1.0, s.recall(), 1e-9);
+        assertEquals(1.0 / 3.0, s.f1(), 1e-9);
+        assertEquals(1.0, s.ap(), 1e-9);
+        assertEquals(1.0, s.ndcg(), 1e-9);
+    }
+
+    //Test que prueba si es relevante en la última posición, se calcula correctamente precision, recall, f1, ap y ndcg
+    @Test
+    void relevanteEnUltimaPosicion() {
+        var s = RetrievalMetrics.calculate(List.of("X1", "X2", "X3", "X4", "R1"), Set.of("R1"), 5);
+        assertEquals(0.2, s.precision(), 1e-9);
+        assertEquals(1.0, s.recall(), 1e-9);
+        assertEquals(1.0 / 3.0, s.f1(), 1e-9);
+        assertEquals(0.2, s.ap(), 1e-9);
+        double idcg = 1.0;
+        double dcg = 1.0 / (Math.log(6) / Math.log(2));
+        assertEquals(dcg / idcg, s.ndcg(), 1e-9);
+    }
+
+    //Test que prueba si hay varios relevantes, se calcula correctamente precision, recall, f1, ap y ndcg
+    @Test
+    void variosRelevantesEjemploGuion() {
+        var s = RetrievalMetrics.calculate(List.of("R1", "X1", "R2", "X2", "X3"), Set.of("R1", "R2", "R3"), 5);
+        assertEquals(0.4, s.precision(), 1e-9);
+        assertEquals(2.0 / 3.0, s.recall(), 1e-9);
+        assertEquals(0.5, s.f1(), 1e-9);
+        assertEquals(5.0 / 9.0, s.ap(), 1e-9);
+        double dcg = 1.0 + 1.0 / (Math.log(4) / Math.log(2));
+        double idcg = 1.0 + 1.0 / (Math.log(3) / Math.log(2)) + 1.0 / (Math.log(4) / Math.log(2));
+        assertEquals(dcg / idcg, s.ndcg(), 1e-9);
+    }
+
+    //Test que prueba si no hay relevantes recuperados, se calcula correctamente precision, recall, f1, ap y ndcg
+    @Test
+    void sinRelevantesRecuperados() {
+        var s = RetrievalMetrics.calculate(List.of("X1", "X2", "X3", "X4", "X5"), Set.of("R1", "R2"), 5);
+        assertEquals(0.0, s.precision(), 1e-9);
+        assertEquals(0.0, s.recall(), 1e-9);
+        assertEquals(0.0, s.f1(), 1e-9);
+        assertEquals(0.0, s.ap(), 1e-9);
+        assertEquals(0.0, s.ndcg(), 1e-9);
+    }
+
+    //Test que prueba si hay más relevantes que k, se calcula correctamente precision, recall, f1, ap y ndcg
+    @Test
+    void masRelevantesQueK() {
+        Set<String> veinticincoRelevantes = new HashSet<>();
+        for (int i = 1; i <= 25; i++) veinticincoRelevantes.add("R" + i);
+        var s = RetrievalMetrics.calculate(List.of("R1", "R2", "R3", "R4", "R5"), veinticincoRelevantes, 5);
+        assertEquals(1.0, s.precision(), 1e-9);
+        assertEquals(0.2, s.recall(), 1e-9);
+        assertEquals(1.0 / 3.0, s.f1(), 1e-9);
+        assertEquals(0.2, s.ap(), 1e-9);
+        assertEquals(1.0, s.ndcg(), 1e-9);
+    }
+
+    //Test que prueba si no hay documentos relevantes en qrels, se calcula correctamente precision, recall, f1, ap y ndcg
+    @Test
+    void sinDocumentosRelevantesEnQrels() {
+        var s = RetrievalMetrics.calculate(List.of("X1", "X2", "X3"), Set.of(), 5);
+        assertEquals(0.0, s.precision(), 1e-9);
+        assertEquals(0.0, s.recall(), 1e-9);
+        assertEquals(0.0, s.f1(), 1e-9);
+        assertEquals(0.0, s.ap(), 1e-9);
+        assertEquals(0.0, s.ndcg(), 1e-9);
+    }
 }

@@ -29,7 +29,7 @@ public final class ExperimentoCandidatos {
                 "Uso: ExperimentoCandidatos <sample|directorio-indices> [consulta...]");
         boolean sample = args[0].equalsIgnoreCase("sample");
         RunConfig config = RunConfig.fromProperties();
-        int[] values = Arrays.stream(System.getProperty("candidates.list", "20,100,300").split(","))
+        int[] values = Arrays.stream(System.getProperty("candidates.list", "20,100,300").split(",")) //En esta linea se cogen los valores de candidates.list y se convierten en un array de enteros
                 .map(String::trim).mapToInt(Integer::parseInt).toArray();
         int k = config.k();
         int reps = Math.max(1, Integer.getInteger("reps", 5));

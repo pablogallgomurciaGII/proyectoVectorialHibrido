@@ -21,6 +21,7 @@ class ChunkAggregationTest {
             hit(4, "C", 1, 0.60),
             hit(5, "A", 7, 0.50));
 
+    //Este test prueba que si se piden k películas, se devuelven como máximo k películas distintas, aunque haya más fragmentos candidatos.
     @Test
     void kFragmentosNoSonKPeliculas() {
         assertEquals(5, HITS.size());
@@ -39,6 +40,8 @@ class ChunkAggregationTest {
         }
     }
 
+    //Test que prueba que si se piden k películas, se devuelven como máximo k películas distintas, aunque haya más fragmentos candidatos.
+    //Coge el mejor fragmento de cada película y lo devuelve como evidencia, sin promediar ni nada.
     @Test
     void maxUsaElMejorFragmentoYLoConservaComoEvidencia() {
         List<RankedMovie> r = ChunkAggregation.MAX.aggregate(HITS, 3);
@@ -48,6 +51,7 @@ class ChunkAggregationTest {
         assertEquals("texto A0", r.get(0).excerpt());
     }
 
+    //Aqui se promedia el mejor fragmento de cada película con el segundo mejor fragmento de la misma película, y lo devuelve como evidencia.
     @Test
     void top2PromediaLosDosMejores() {
         List<RankedMovie> r = ChunkAggregation.TOP2_MEAN.aggregate(HITS, 3);

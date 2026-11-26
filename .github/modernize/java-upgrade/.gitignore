@@ -1,0 +1,17 @@
+Compilación de Maven (se regenera con mvn compile)
+target/
+
+Índices Lucene: se reconstruyen con MovieIndexerMain (ver README)
+indices/
+
+Colección completa (93 MB): no se sube al repositorio
+datos/
+
+Configuración local del editor
+.vscode/
+.idea/
+*.iml
+
+Sistema operativo
+.DS_Store
+Thumbs.db
